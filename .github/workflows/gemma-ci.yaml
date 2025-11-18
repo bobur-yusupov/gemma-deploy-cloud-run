@@ -28,3 +28,12 @@ jobs:
           docker build -t $IMAGE ./gemma
           docker push $IMAGE
 
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy gemma-service \
+            --image europe-central2-docker.pkg.dev/gemma-deployment/gemma-repo/gemma-deploy:${GITHUB_SHA} \
+            --platform managed \
+            --region europe-central2 \
+            --allow-unauthenticated \
+            --project gemma-deployment \
+            --set-env-vars GITHUB_SHA=${GITHUB_SHA}
