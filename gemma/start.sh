@@ -8,7 +8,7 @@ ollama serve &
 sleep 5
 
 # Pull model at runtime (once per container)
-ollama pull gemma:1b || true
+ollama pull gemma3:1b || true
 
 # Start FastAPI
 uvicorn main:app --host 0.0.0.0 --port 8080

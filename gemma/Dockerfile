@@ -1,25 +1,25 @@
+# Base image with Ollama preinstalled
 FROM ollama/ollama:latest
 
-# Install Python
+# Set working directory first
+WORKDIR /app
+
+# Install Python and dependencies
 RUN apt-get update && apt-get install -y python3 python3-pip python3-venv
 
-# Python deps
-COPY requirements.txt /app/requirements.txt
-RUN python3 -m venv /app/.venv
-RUN /app/.venv/bin/pip install -r /app/requirements.txt --break-system-packages
+# Copy requirements and create venv
+COPY requirements.txt .
+RUN python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 
+# Update PATH to use venv
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Copy app
-COPY main.py /app/main.py
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+# Copy FastAPI app
+COPY main.py app.py
 
-WORKDIR /app
+# Expose Cloud Run port
 EXPOSE 8080
 
-# Disable Ollama base image entrypoint
-ENTRYPOINT []
-
-# Start Ollama server and FastAPI at runtime
-CMD ["/bin/bash", "/app/start.sh"]
+# Override entrypoint and start services
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["ollama serve & (sleep 10 && ollama pull gemma3:1b) & uvicorn app:app --host 0.0.0.0 --port 8080"]

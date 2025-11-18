@@ -1,22 +1,25 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import subprocess
 
-app = FastAPI()
+app = FastAPI(title="Gemma3 API")
 
-MODEL = "gemma:1b"
+class PromptRequest(BaseModel):
+    prompt: str
 
-@app.get("/infer")
-def infer(prompt: str):
-    result = subprocess.run(
-        ["ollama", "run", MODEL, prompt],
-        capture_output=True,
-        text=True
-    )
+@app.get("/")
+def root():
+    return {"message": "Gemma3 API is running!"}
 
-    return {
-        "response": result.stdout.strip()
-    }
+@app.post("/infer")
+def infer(req: PromptRequest):
+    try:
+        # Run ollama gemma3:1b with the prompt
+        result = subprocess.run(
+            ["ollama", "run", "gemma3:1b", req.prompt],
+            capture_output=True, text=True, check=True
+        )
+        return {"response": result.stdout.strip()}
+    except subprocess.CalledProcessError as e:
+        raise HTTPException(status_code=500, detail=e.stderr)
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
