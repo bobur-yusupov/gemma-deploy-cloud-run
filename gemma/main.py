@@ -9,7 +9,7 @@ class PromptRequest(BaseModel):
 
 @app.get("/")
 def root():
-    return {"message": "Gemma 3 API is running!"}
+    return {"message": "Gemma 3 API is running! Happy development"}
 
 @app.post("/infer")
 def infer(req: PromptRequest):
