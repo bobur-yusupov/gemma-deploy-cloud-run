@@ -1,3 +1,5 @@
+name: Gemma CI/CD
+
 on:
   push:
     paths:
