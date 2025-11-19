@@ -11,12 +11,12 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.2.6",
     "@types/react-dom": "^19.2.3",
-    "ansi-regex": "^6.2.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-markdown": "^10.1.0",
     "react-scripts": "5.0.1",
     "rehype-sanitize": "^6.0.0",
+    "strip-ansi": "^7.1.2",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
@@ -42,6 +42,11 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!(strip-ansi|ansi-regex|react-markdown|rehype-sanitize|unified|remark-parse|remark-rehype|rehype-stringify|hast-util-from-parse5|hast-util-to-parse5|hastscript|property-information|space-separated-tokens|comma-separated-tokens|web-namespaces|zwitch|html-void-elements|mdast-util-to-hast|mdast-util-definitions|unist-util-visit|unist-util-visit-parents|unist-util-is|unist-util-generated|mdast-util-to-string|micromark|decode-named-character-reference|character-entities|trim-lines|mdast-util-from-markdown|mdast-util-to-markdown|escape-string-regexp|unist-builder|vfile|vfile-message|is-plain-obj)/)"
     ]
   }
 }
