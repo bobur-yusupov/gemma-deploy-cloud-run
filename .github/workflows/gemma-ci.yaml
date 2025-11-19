@@ -19,21 +19,21 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Configure Docker
+      - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker europe-central2-docker.pkg.dev --quiet
       
       - name: Build and push Docker image
         run: |
-          IMAGE=europe-central2-docker.pkg.dev/gemma-deployment/gemma-repo/gemma-deploy:${GITHUB_SHA}
-          docker build -t $IMAGE ./gemma
-          docker push $IMAGE
+          IMAGE="europe-central2-docker.pkg.dev/gemma-deployment/gemma-repo/gemma-deploy:${GITHUB_SHA}"
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          docker build -t "$IMAGE" ./gemma
+          docker push "$IMAGE"
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy gemma-service \
-            --image $IMAGE \
+            --image "$IMAGE" \
             --region europe-central2 \
             --service-account cloud-run-runtime-sa@gemma-deployment.iam.gserviceaccount.com \
             --platform managed \
             --allow-unauthenticated
-
