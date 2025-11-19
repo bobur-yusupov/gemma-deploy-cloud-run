@@ -1,9 +1,10 @@
-from websockets.sync.client import connect
+import requests
 
-def hello():
-    with connect("wss://gemma-service-530483421367.europe-west4.run.app/ws/infer") as websocket:
-        websocket.send("Hello world to Gemma 3!")
-        message = websocket.recv()
-        print(f"Received: {message}")
+url = "https://gemma-service-530483421367.europe-west4.run.app/infer-stream"
+data = {"prompt": "Write a short poem about clouds."}
 
-hello()
+# Use stream=True to get chunks as they arrive
+with requests.post(url, json=data, stream=True) as r:
+    for chunk in r.iter_lines(decode_unicode=True):
+        if chunk:
+            print(chunk)

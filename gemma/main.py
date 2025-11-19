@@ -6,7 +6,7 @@ import asyncio
 
 app = FastAPI(title="Gemma3 API")
 
-MODEL = "gemma3:4b"
+MODEL = "gemma3:1b"
 
 class PromptRequest(BaseModel):
     prompt: str
@@ -35,15 +35,19 @@ def infer(req: PromptRequest):
     
 
 @app.post("/infer-stream")
-def infer_stream(request: PromptRequest):
+def infer_stream(req: PromptRequest):
     def generate():
         process = subprocess.Popen(
             ["ollama", "run", MODEL, req.prompt],
             stdout=subprocess.PIPE,
-            text=True
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
         )
-        for line in process.stdout:
+        for line in iter(process.stdout.readline, ""):
             yield line
+        process.stdout.close()
+        process.wait()
     return StreamingResponse(generate(), media_type="text/plain")
 
 
