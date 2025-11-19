@@ -33,7 +33,7 @@ jobs:
         run: |
           gcloud run deploy gemma-service \
             --image "$IMAGE" \
-            --region europe-central2 \
+            --region europe-west4 \
             --platform managed \
             --service-account cloud-run-runtime-sa@gemma-deployment.iam.gserviceaccount.com \
             --allow-unauthenticated \
