@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, KeyboardEvent } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
-import ansiRegex from 'ansi-regex';
+import stripAnsi from 'strip-ansi';
 import './App.css';
 
 type Language =
@@ -21,9 +21,6 @@ function App() {
 
   const outputRef = useRef<HTMLDivElement | null>(null);
   const explanationRef = useRef<string>('');
-
-  const stripAnsi = (text: string) =>
-    text.replace(ansiRegex({ onlyFirst: false }), '');
 
   const handleExplain = async () => {
     if (!code.trim()) return;
