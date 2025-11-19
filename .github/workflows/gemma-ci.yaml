@@ -38,6 +38,6 @@ jobs:
             --service-account cloud-run-runtime-sa@gemma-deployment.iam.gserviceaccount.com \
             --allow-unauthenticated \
             --cpu 4 \
-            --memory 8Gi \
+            --memory 16Gi \
             --gpu 1 \
             --gpu-type nvidia-l4

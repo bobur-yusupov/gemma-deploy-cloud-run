@@ -27,7 +27,6 @@ def infer(req: PromptRequest):
     except subprocess.CalledProcessError as e:
         raise HTTPException(status_code=500, detail=e.stderr)
 
-
 @app.get("/health")
 def health():
     return {"status": "OK"}
