@@ -12,7 +12,7 @@ def root():
     return {
         "message": "Gemma 3 API is running! Happy development",
         "health": "OK",
-        "model": "gemma3:1b"
+        "model": "gemma3:4b"
     }
 
 @app.post("/infer")
