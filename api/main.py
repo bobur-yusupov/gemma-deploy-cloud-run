@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import requests
-import json
+import html
 
 app = FastAPI(title="Code Explanation API")
 
@@ -36,11 +36,11 @@ Provide a clear explanation covering:
 
     def generate():
         with requests.post(GEMMA_URL, json={"prompt": prompt}, stream=True) as r:
-            for chunk in r.iter_lines(decode_unicode=True):
+            for chunk in r.iter_content(chunk_size=None, decode_unicode=True):
                 if chunk:
-                    yield f"data: {chunk}\n\n"
+                    yield chunk
     
-    return StreamingResponse(generate(), media_type="text/event-stream")
+    return StreamingResponse(generate(), media_type="text/plain")
 
 @app.get("/health")
 async def health():

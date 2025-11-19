@@ -30,15 +30,8 @@ function App() {
           const { done, value } = await reader.read();
           if (done) break;
 
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n');
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const text = line.slice(6);
-              setExplanation((prev) => prev + text);
-            }
-          }
+          const chunk = decoder.decode(value, { stream: true });
+          setExplanation((prev) => prev + chunk);
         }
       }
     } catch (error) {

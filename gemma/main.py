@@ -42,10 +42,13 @@ def infer_stream(req: PromptRequest):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
-            bufsize=1
+            bufsize=0
         )
-        for line in iter(process.stdout.readline, ""):
-            yield line
+        while True:
+            char = process.stdout.read(1)
+            if not char:
+                break
+            yield char
         process.stdout.close()
         process.wait()
     return StreamingResponse(generate(), media_type="text/plain")
