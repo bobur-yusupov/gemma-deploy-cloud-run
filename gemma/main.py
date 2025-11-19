@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import subprocess
 import asyncio
@@ -33,45 +34,17 @@ def infer(req: PromptRequest):
         raise HTTPException(status_code=500, detail=e.stderr)
     
 
-
-
-
-# ---------------------------------------------------------------------
-#   WEBSOCKET STREAMING ENDPOINT
-# ---------------------------------------------------------------------
-
-@app.websocket("/ws/infer")
-async def websocket_infer(ws: WebSocket):
-    await ws.accept()
-
-    try:
-        data = await ws.receive_text()
-        prompt = data.strip()
-
+@app.post("/infer-stream")
+def infer_stream(request: PromptRequest):
+    def generate():
         process = subprocess.Popen(
-            ["ollama", "run", MODEL, prompt],
+            ["ollama", "run", MODEL, req.prompt],
             stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1
+            text=True
         )
-
-        while True:
-            line = process.stdout.readline()
-            if line:
-                await ws.send_text(line.rstrip())
-            else:
-                break
-        
-        process.wait()
-        await ws.send_text("[END]")
-    
-    except WebSocketDisconnect:
-        print("WebSocket disconnected.")
-    except Exception as e:
-        await ws.send_text(f"Error: {str(e)}")
-    finally:
-        await ws.close()
+        for line in process.stdout:
+            yield line
+    return StreamingResponse(generate(), media_type="text/plain")
 
 
 @app.get("/health")
