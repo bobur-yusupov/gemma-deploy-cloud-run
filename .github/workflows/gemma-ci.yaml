@@ -34,6 +34,10 @@ jobs:
           gcloud run deploy gemma-service \
             --image "$IMAGE" \
             --region europe-central2 \
-            --service-account cloud-run-runtime-sa@gemma-deployment.iam.gserviceaccount.com \
             --platform managed \
-            --allow-unauthenticated
+            --service-account cloud-run-runtime-sa@gemma-deployment.iam.gserviceaccount.com \
+            --allow-unauthenticated \
+            --cpu 4 \
+            --memory 8Gi \
+            --gpu 1 \
+            --gpu-type nvidia-l4
