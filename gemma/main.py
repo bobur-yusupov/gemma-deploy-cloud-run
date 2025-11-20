@@ -50,17 +50,17 @@ def infer_stream(req: PromptRequest):
             ["ollama", "run", MODEL, req.prompt],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            text=True,
+            text=False,
             bufsize=0
         )
         while True:
-            char = process.stdout.read(1)
+            char = process.stdout.read(1024)
             if not char:
                 break
             yield char
         process.stdout.close()
         process.wait()
-    return StreamingResponse(generate(), media_type="text/plain")
+    return StreamingResponse(generate(), media_type="text/plain; charset=utf-8")
 
 
 @app.get("/health")

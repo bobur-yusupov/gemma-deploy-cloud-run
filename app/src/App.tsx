@@ -1,17 +1,8 @@
 import React, { useState, useEffect, useRef, KeyboardEvent } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
-import stripAnsi from 'strip-ansi';
 import './App.css';
-
-type Language =
-  | 'python'
-  | 'javascript'
-  | 'typescript'
-  | 'java'
-  | 'cpp'
-  | 'go'
-  | 'rust';
+import { explainCode, Language } from './services/codeExplainService';
 
 function App() {
   const [code, setCode] = useState<string>('');
@@ -30,32 +21,14 @@ function App() {
     explanationRef.current = '';
 
     try {
-      const response = await fetch('http://localhost:8000/explain', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: code.trim(), language }),
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || 'Failed to fetch explanation');
-      }
-
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value, { stream: true });
-          const cleanChunk = stripAnsi(chunk);
-
-          explanationRef.current += cleanChunk;
+      await explainCode({
+        code,
+        language,
+        onChunk: (chunk) => {
+          explanationRef.current += chunk;
           setExplanation(explanationRef.current);
-        }
-      }
+        },
+      });
     } catch (error: any) {
       explanationRef.current = `Error: ${error.message}`;
       setExplanation(explanationRef.current);

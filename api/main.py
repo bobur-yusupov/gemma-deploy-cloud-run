@@ -45,14 +45,14 @@ How it works step by step"""
                     r.raise_for_status() # Raise exception if status is 4xx/5xx
                     async for chunk in r.aiter_text(chunk_size=512):
                         print(chunk)
-                        yield chunk.encode("utf-8")
+                        yield chunk
         
         except httpx.RequestError as e:
-            yield f"Error connecting to Gemma service: {str(e)}".encode("utf-8")
+            yield f"Error connecting to Gemma service: {str(e)}"
         except httpx.HTTPStatusError as e:
-            yield f"Gemma service returned an error: {str(e)}".encode("utf-8")
+            yield f"Gemma service returned an error: {str(e)}"
 
-    return StreamingResponse(generate(), media_type="text/plain")
+    return StreamingResponse(generate(), media_type="text/plain; charset=utf-8")
 
 @app.get("/health")
 async def health():
