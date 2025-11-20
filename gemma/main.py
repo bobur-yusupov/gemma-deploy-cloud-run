@@ -30,6 +30,7 @@ def root():
 
 @app.post("/infer")
 def infer(req: PromptRequest):
+    # Inference endpoint
     result = ollama.generate(
         model=MODEL,
         prompt=req.prompt
