@@ -14,6 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 MODEL = "gemma3:1b"
 
 class PromptRequest(BaseModel):
