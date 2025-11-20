@@ -2,8 +2,7 @@ from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-import subprocess
-import asyncio
+import ollama
 
 app = FastAPI(title="Gemma3 API")
 
@@ -30,36 +29,27 @@ def root():
 
 @app.post("/infer")
 def infer(req: PromptRequest):
-    try:
-        # Run ollama gemma3:1b with the prompt
-        result = subprocess.run(
-            ["ollama", "run", MODEL, req.prompt],
-            capture_output=True, text=True, check=True
-        )
-        return {
-            "response": result.stdout.strip()
-        }
-    except subprocess.CalledProcessError as e:
-        raise HTTPException(status_code=500, detail=e.stderr)
+    result = ollama.generate(
+        model=MODEL,
+        prompt=req.prompt
+    )
+    return {"response": result["response"]}
     
 
 @app.post("/infer-stream")
 def infer_stream(req: PromptRequest):
     def generate():
-        process = subprocess.Popen(
-            ["ollama", "run", MODEL, req.prompt],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=False,
-            bufsize=0
+        stream = ollama.generate(
+            model=MODEL,
+            prompt=req.prompt,
+            stream=True
         )
-        while True:
-            char = process.stdout.read(1024)
-            if not char:
-                break
-            yield char
-        process.stdout.close()
-        process.wait()
+
+        for chunk in stream:
+            text = chunk["response"]
+            if text:
+                yield text
+
     return StreamingResponse(generate(), media_type="text/plain; charset=utf-8")
 
 
