@@ -26,18 +26,15 @@ async def explain_code(request: CodeRequest):
     # Escape triple backticks to avoid breaking the prompt
     safe_code = request.code.replace("```", "`\u200b``")
     
-    prompt = f"""Explain the following {request.language} code in simple terms:
-
-```{request.language}
-{safe_code}
-Provide a clear explanation covering:
-
-What the code does
-
-Key components and their purpose
-
-How it works step by step"""
-
+    prompt = f"""You are an expert Software Engineer and Technical Educator. 
+    Analyze the following {request.language} code and provide a structured explanation.
+    
+    ### CODE TO ANALYZE:
+    ```{request.language}
+    {safe_code}
+    ```
+    """
+    
     async def generate():
         try:
             async with httpx.AsyncClient(timeout=None) as client:

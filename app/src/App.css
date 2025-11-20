@@ -49,6 +49,20 @@
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
+  align-items: center;
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.language-selector label {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
 }
 
 .language-select {
@@ -124,12 +138,36 @@
   color: #333;
 }
 
+.explanation-output::-webkit-scrollbar,
+.code-input::-webkit-scrollbar {
+  width: 12px;
+}
+
+.explanation-output::-webkit-scrollbar-track,
+.code-input::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  border-radius: 8px;
+}
+
+.explanation-output::-webkit-scrollbar-thumb,
+.code-input::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+}
+
+.explanation-output::-webkit-scrollbar-thumb:hover,
+.code-input::-webkit-scrollbar-thumb:hover {
+  background: #764ba2;
+}
+
 .explanation-output h1,
 .explanation-output h2,
 .explanation-output h3 {
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
   color: #667eea;
+  font-weight: 700;
 }
 
 .explanation-output code {
@@ -157,20 +195,23 @@
 .explanation-output ul,
 .explanation-output ol {
   margin-left: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .explanation-output li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.8;
 }
 
 .explanation-output p {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.8;
 }
 
 .explanation-output strong {
   color: #764ba2;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.05em;
 }
 
 @media (max-width: 1024px) {
