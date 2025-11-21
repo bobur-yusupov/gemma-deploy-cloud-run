@@ -25,6 +25,7 @@ jobs:
 
       - name: Build binary
         run: |
+          cd cli
           echo "Building for ${{ matrix.os }} ${{ matrix.arch }}"
           output="yordamchi-${{ matrix.os }}-${{ matrix.arch }}"
           if [[ "${{ matrix.os }}" == "windows" ]]; then
