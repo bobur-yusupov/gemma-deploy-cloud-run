@@ -37,7 +37,6 @@ def infer(req: PromptRequest):
     )
     return {"response": result["response"]}
     
-
 @app.post("/infer-stream")
 def infer_stream(req: PromptRequest):
     def generate():
