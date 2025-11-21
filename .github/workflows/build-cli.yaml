@@ -26,15 +26,16 @@ jobs:
       - name: Build binary
         run: |
           cd cli
+          mkdir -p dist
           echo "Building for ${{ matrix.os }} ${{ matrix.arch }}"
           output="yordamchi-${{ matrix.os }}-${{ matrix.arch }}"
           if [[ "${{ matrix.os }}" == "windows" ]]; then
             output="${output}.exe"
           fi
-          GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -o "dist/${output}" ./...
+          GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -o "dist/${output}" .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: yordamchi-${{ matrix.os }}-${{ matrix.arch }}
-          path: dist/
+          path: cli/dist/
