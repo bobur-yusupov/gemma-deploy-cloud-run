@@ -1,4 +1,4 @@
-name: Build Yordamchi CLI
+name: Build and Release Yordamchi CLI
 
 on:
   push:
@@ -34,8 +34,35 @@ jobs:
           fi
           GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -o "dist/${output}" .
 
-      - name: Upload artifact
+      - name: Upload build artifact (temporary)
         uses: actions/upload-artifact@v4
         with:
-          name: yordamchi-${{ matrix.os }}-${{ matrix.arch }}
+          name: build-${{ matrix.os }}-${{ matrix.arch }}
           path: cli/dist/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release-artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
