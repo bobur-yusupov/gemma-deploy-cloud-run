@@ -44,7 +44,7 @@ def infer_stream(req: PromptRequest):
         stream = ollama.generate(
             model=MODEL,
             prompt=req.prompt,
-            stream=True
+            stream=True,
         )
 
         for chunk in stream:
